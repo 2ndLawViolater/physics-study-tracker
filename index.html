@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 0 — Math Foundation & Intro Physics</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f5f5f3;
+    --bg-tertiary: #eeede8;
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6b67;
+    --text-tertiary: #9a9a96;
+    --border: rgba(0,0,0,0.12);
+    --border-mid: rgba(0,0,0,0.22);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --blue-bg: #E6F1FB;
+    --blue-text: #0C447C;
+    --blue-bar: #378ADD;
+    --green-bg: #EAF3DE;
+    --green-text: #27500A;
+    --green-bar: #639922;
+    --purple-bg: #EEEDFE;
+    --purple-text: #3C3489;
+    --amber-bg: #FAEEDA;
+    --amber-text: #633806;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-secondary: #252523;
+      --bg-tertiary: #2e2e2b;
+      --text-primary: #f0efe8;
+      --text-secondary: #9a9a96;
+      --text-tertiary: #6b6b67;
+      --border: rgba(255,255,255,0.1);
+      --border-mid: rgba(255,255,255,0.2);
+      --blue-bg: #042C53;
+      --blue-text: #B5D4F4;
+      --green-bg: #173404;
+      --green-text: #C0DD97;
+      --purple-bg: #26215C;
+      --purple-text: #CECBF6;
+      --amber-bg: #412402;
+      --amber-text: #FAC775;
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container { max-width: 780px; margin: 0 auto; }
+
+  .top-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; margin-bottom: 6px;
+  }
+  .top-title { font-size: 20px; font-weight: 500; color: var(--text-primary); }
+  .top-sub { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+
+  .reset-btn {
+    font-size: 12px; padding: 6px 14px;
+    border-radius: var(--radius-md);
+    border: 0.5px solid var(--border-mid);
+    background: transparent; color: var(--text-secondary);
+    cursor: pointer; font-family: var(--font);
+  }
+  .reset-btn:hover { background: var(--bg-secondary); }
+
+  .overall-label {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-secondary);
+    margin: 12px 0 5px;
+  }
+  .overall-track {
+    width: 100%; height: 6px;
+    background: var(--border); border-radius: 3px;
+    margin-bottom: 16px; overflow: hidden;
+  }
+  .overall-fill {
+    height: 6px; border-radius: 3px;
+    background: var(--blue-bar); transition: width 0.3s;
+  }
+
+  .metrics {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; margin-bottom: 1.5rem;
+  }
+  .metric {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md); padding: 10px 12px;
+  }
+  .metric-val { font-size: 20px; font-weight: 500; color: var(--text-primary); }
+  .metric-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  .block-header {
+    display: flex; align-items: center;
+    gap: 8px; margin: 1.25rem 0 6px;
+  }
+  .block-label {
+    font-size: 11px; font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .block-tag {
+    font-size: 11px; padding: 2px 8px;
+    border-radius: 4px; font-weight: 500;
+  }
+  .b1-tag { background: var(--blue-bg); color: var(--blue-text); }
+  .b2-tag { background: var(--green-bg); color: var(--green-text); }
+  .b3-tag { background: var(--purple-bg); color: var(--purple-text); }
+
+  .week-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 8px; overflow: hidden;
+  }
+  .week-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; cursor: pointer; user-select: none;
+  }
+  .week-row:hover { background: var(--bg-secondary); }
+
+  .week-badge {
+    font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: 5px; white-space: nowrap;
+  }
+  .w-blue { background: var(--blue-bg); color: var(--blue-text); }
+  .w-green { background: var(--green-bg); color: var(--green-text); }
+  .w-purple { background: var(--purple-bg); color: var(--purple-text); }
+
+  .week-title { font-size: 13px; font-weight: 500; color: var(--text-primary); flex: 1; }
+  .week-pct { font-size: 12px; color: var(--text-secondary); margin-right: 4px; }
+  .week-bar-wrap { width: 80px; }
+  .week-bar-track {
+    height: 4px; background: var(--border);
+    border-radius: 2px; overflow: hidden;
+  }
+  .week-bar-fill { height: 4px; border-radius: 2px; transition: width 0.3s; }
+  .chevron { font-size: 11px; color: var(--text-tertiary); }
+
+  .week-body {
+    display: none; padding: 0 16px 16px;
+    border-top: 0.5px solid var(--border);
+  }
+  .week-body.open { display: block; }
+
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-top: 14px;
+  }
+  @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+
+  .inner-box {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md); padding: 10px 12px;
+  }
+  .inner-label {
+    font-size: 10px; font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px;
+  }
+
+  .task-row {
+    display: flex; align-items: flex-start;
+    gap: 8px; margin-bottom: 6px;
+  }
+  .task-row input[type=checkbox] { margin-top: 2px; flex-shrink: 0; cursor: pointer; }
+  .task-text { font-size: 12px; color: var(--text-primary); line-height: 1.5; cursor: pointer; }
+  .task-text.done { text-decoration: line-through; color: var(--text-tertiary); }
+  .sub-item {
+    font-size: 11px; color: var(--text-secondary);
+    margin-left: 20px; margin-bottom: 3px; line-height: 1.4;
+  }
+
+  .conn-box {
+    margin-top: 12px;
+    border-left: 3px solid var(--blue-bar);
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+  .conn-label {
+    font-size: 10px; font-weight: 500; color: var(--blue-text);
+    letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .conn-text { font-size: 12px; color: var(--text-primary); line-height: 1.55; }
+
+  .checkpoint-box {
+    margin-top: 10px;
+    border-left: 3px solid var(--green-bar);
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+  .checkpoint-label {
+    font-size: 10px; font-weight: 500; color: var(--green-text);
+    letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .checkpoint-text { font-size: 12px; color: var(--text-primary); line-height: 1.55; }
+
+  .notes-label {
+    font-size: 11px; color: var(--text-secondary);
+    margin-top: 12px; margin-bottom: 4px;
+  }
+  textarea {
+    width: 100%; min-height: 64px;
+    font-size: 12px; font-family: var(--font);
+    color: var(--text-primary);
+    background: var(--bg);
+    border: 0.5px solid var(--border-mid);
+    border-radius: var(--radius-md);
+    padding: 8px 10px; resize: vertical; line-height: 1.5;
+  }
+  textarea::placeholder { color: var(--text-tertiary); }
+  textarea:focus { outline: none; border-color: var(--blue-bar); }
+
+  .footer {
+    text-align: center; margin-top: 2rem;
+    font-size: 12px; color: var(--text-tertiary);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="top-header">
+    <div>
+      <div class="top-title">Phase 0 — math foundation &amp; intro physics</div>
+      <div class="top-sub" id="progress-status">Loading progress...</div>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">Reset all</button>
+  </div>
+
+  <div class="overall-label">
+    <span>Overall progress</span>
+    <span id="overall-pct">0%</span>
+  </div>
+  <div class="overall-track">
+    <div class="overall-fill" id="overall-bar" style="width:0%"></div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-val" id="m-weeks">0/12</div><div class="metric-lbl">Weeks complete</div></div>
+    <div class="metric"><div class="metric-val" id="m-tasks">0</div><div class="metric-lbl">Tasks done</div></div>
+    <div class="metric"><div class="metric-val" id="m-total">—</div><div class="metric-lbl">Total tasks</div></div>
+    <div class="metric"><div class="metric-val" id="m-block">Block 1, wk 1</div><div class="metric-lbl">Current block</div></div>
+  </div>
+
+  <div id="weeks-container"></div>
+
+  <div class="footer">Progress saves automatically to your browser &nbsp;·&nbsp; University Physics with Modern Physics (your edition)</div>
+
+</div>
+
+<script>
+const WEEKS = [
+  {
+    id:'w1', block:1, badge:'w-blue', label:'Week 1',
+    title:'Limits, derivatives, and straight-line motion',
+    math:[
+      {id:'w1m1', text:'Ghrist Week 1: limits & continuity', subs:[]},
+      {id:'w1m2', text:'Thomas Ch 2: limit definition, one-sided limits', subs:['Thomas 2.2: #1–12 (limit evaluation)']},
+      {id:'w1m3', text:'Thomas Ch 3.1–3.4: derivative definition, power rule, product rule', subs:['Thomas 3.1: #1–10 (derivative from definition)','Thomas 3.3: #1–20 (power/product rules)']},
+    ],
+    physics:[
+      {id:'w1p1', text:'Ch 1: Units, Physical Quantities, and Vectors', subs:['#1.1–1.20 (unit conversions, vector components)']},
+      {id:'w1p2', text:'Ch 2: Motion Along a Straight Line', subs:['#2.1–2.25 (x(t), v(t), a(t) problems)','#2.37–2.45 (free fall)']},
+    ],
+    connection:'Velocity is dx/dt and acceleration is dv/dt — the same derivatives you computed in Thomas. Work Ch 2 problems by differentiating position functions, not just memorizing the kinematic equations.',
+    checkpoint:null
+  },
+  {
+    id:'w2', block:1, badge:'w-blue', label:'Week 2',
+    title:'Chain rule, trig derivatives, and 2D kinematics',
+    math:[
+      {id:'w2m1', text:'Ghrist Week 2: differentiation rules', subs:[]},
+      {id:'w2m2', text:'Thomas 3.5: chain rule', subs:['Thomas 3.5: #1–30 (chain rule practice)']},
+      {id:'w2m3', text:'Thomas 3.6: implicit differentiation', subs:[]},
+      {id:'w2m4', text:'Thomas 3.8: trig function derivatives (sin, cos, tan)', subs:['Thomas 3.8: #1–20 (trig derivatives)']},
+    ],
+    physics:[
+      {id:'w2p1', text:'Ch 3: Motion in Two or Three Dimensions', subs:['#3.1–3.25 (vector components, relative velocity)','#3.26–3.40 (projectile motion)']},
+      {id:'w2p2', text:'Ch 4: Newton\'s Laws of Motion', subs:['#4.1–4.20 (identifying forces, free body diagrams)']},
+    ],
+    connection:'Circular motion uses sin and cos of time. Their derivatives — which you just learned — give velocity components directly. Try deriving v = rω from x = r·cos(ωt).',
+    checkpoint:null
+  },
+  {
+    id:'w3', block:1, badge:'w-blue', label:'Week 3',
+    title:'Integration basics and applying Newton\'s laws',
+    math:[
+      {id:'w3m1', text:'Ghrist Week 3: integration & the fundamental theorem', subs:[]},
+      {id:'w3m2', text:'Thomas Ch 5.1–5.4: Riemann sums, definite integrals, FTC', subs:['Thomas 5.3: #1–20 (definite integrals)','Thomas 5.4: #1–15 (FTC, finding area)']},
+      {id:'w3m3', text:'Thomas Ch 5.5: u-substitution', subs:['Thomas 5.5: #1–30 (u-substitution)']},
+    ],
+    physics:[
+      {id:'w3p1', text:'Ch 5: Applying Newton\'s Laws', subs:['#5.1–5.30 (friction, tension, circular dynamics)','#5.31–5.45 (banked curves, drag)']},
+      {id:'w3p2', text:'Ch 6: Work and Kinetic Energy', subs:['#6.1–6.20 (work by constant & variable force)','#6.21–6.35 (work-energy theorem)']},
+    ],
+    connection:'Given a(t), you get v(t) by integrating — this is the FTC you just practiced. Try Ch 6\'s variable-force problems (W = ∫F dx) using integrals rather than constant-force shortcuts.',
+    checkpoint:null
+  },
+  {
+    id:'w4', block:1, badge:'w-blue', label:'Week 4',
+    title:'Integration techniques, energy, and momentum',
+    math:[
+      {id:'w4m1', text:'Thomas Ch 8.1: integration by parts', subs:['Thomas 8.1: #1–25 (integration by parts)']},
+      {id:'w4m2', text:'Thomas Ch 8.3–8.4: trig integrals & substitution', subs:['Thomas 8.3: #1–20 (trig integrals)']},
+      {id:'w4m3', text:'Thomas Ch 8.8: improper integrals', subs:['Thomas 8.8: #1–15 (improper integrals)']},
+    ],
+    physics:[
+      {id:'w4p1', text:'Ch 7: Potential Energy and Energy Conservation', subs:['#7.1–7.30 (work integrals, variable force)','#7.31–7.45 (potential energy curves, equilibrium)']},
+      {id:'w4p2', text:'Ch 8: Momentum, Impulse, and Collisions', subs:['#8.1–8.25 (impulse-momentum theorem)','#8.26–8.45 (elastic & inelastic collisions)']},
+    ],
+    connection:'W = ∫F·dx is a direct application of the integration techniques from Thomas Ch 8. Try computing work done by a spring force F = −kx over a displacement. Then check conservation of energy for the same spring.',
+    checkpoint:'End-of-block 1 check — before moving to Week 5: Can you: (1) differentiate any combination of polynomial, trig, and exponential functions using chain/product rules? (2) Evaluate a definite integral using u-substitution? (3) Set up and solve F = ma for a 2D system with friction? (4) Compute work as W = ∫F·dx for a variable force? If any of these feel shaky, spend 2–3 extra sessions before continuing.'
+  },
+  {
+    id:'w5', block:2, badge:'w-green', label:'Week 5',
+    title:'Series, Taylor expansions, and rotation',
+    math:[
+      {id:'w5m1', text:'Ghrist: sequences & series', subs:[]},
+      {id:'w5m2', text:'Thomas Ch 10.1–10.3: convergence, series tests', subs:['Thomas 10.1: #1–20 (geometric & telescoping series)']},
+      {id:'w5m3', text:'Thomas Ch 10.8–10.9: Taylor & Maclaurin series', subs:['Thomas 10.9: #1–20 (Taylor expansions of e^x, sin, cos)']},
+    ],
+    physics:[
+      {id:'w5p1', text:'Ch 9: Rotation of Rigid Bodies', subs:['#9.1–9.25 (angular kinematics, moment of inertia)','#9.26–9.40 (rotational kinetic energy, rolling)']},
+      {id:'w5p2', text:'Ch 10: Dynamics of Rotational Motion', subs:['#10.1–10.25 (torque, angular acceleration)','#10.26–10.40 (angular momentum)']},
+    ],
+    connection:'Taylor series let you approximate sin(x) ≈ x and cos(x) ≈ 1 − x²/2 for small angles. You\'ll use this constantly — pendulums, optics, QM perturbation theory. Practice expanding e^x, sin(x), cos(x) from scratch.',
+    checkpoint:null
+  },
+  {
+    id:'w6', block:2, badge:'w-green', label:'Week 6',
+    title:'First-order ODEs, equilibrium, and gravitation',
+    math:[
+      {id:'w6m1', text:'Zill Ch 2.2: separable equations', subs:['Zill 2.2: #1–20 (separable ODEs)']},
+      {id:'w6m2', text:'Zill Ch 2.3: linear first-order equations', subs:['Zill 2.3: #1–20 (integrating factor method)']},
+      {id:'w6m3', text:'MIT OCW 18.03: direction fields & qualitative analysis', subs:[]},
+    ],
+    physics:[
+      {id:'w6p1', text:'Ch 11: Equilibrium and Elasticity', subs:['#11.1–11.25 (static equilibrium, center of gravity)','#11.26–11.40 (stress, strain, elastic moduli)']},
+      {id:'w6p2', text:'Ch 13: Gravitation', subs:['#13.1–13.25 (Newton\'s law of gravitation, g)','#13.26–13.45 (gravitational PE, orbits, escape speed)']},
+    ],
+    connection:'Radioactive decay, Newton\'s cooling, and drag-dominated motion are all first-order linear ODEs. The equation dv/dt = −(b/m)v for terminal velocity is separable and solvable exactly as your Zill problems this week.',
+    checkpoint:null
+  },
+  {
+    id:'w7', block:2, badge:'w-green', label:'Week 7',
+    title:'Second-order ODEs and periodic motion',
+    math:[
+      {id:'w7m1', text:'Zill Ch 3.1: homogeneous 2nd order, characteristic equation', subs:['Zill 3.1: #1–20 (characteristic roots — real, complex, repeated)']},
+      {id:'w7m2', text:'Zill Ch 3.4: undetermined coefficients (driven systems)', subs:['Zill 3.4: #1–20 (particular solutions)']},
+      {id:'w7m3', text:'Zill Ch 3.6: damped & driven oscillators', subs:['Zill 3.6: #1–15 (resonance problems)']},
+    ],
+    physics:[
+      {id:'w7p1', text:'Ch 14: Periodic Motion', subs:['#14.1–14.25 (SHM, angular frequency, amplitude)','#14.26–14.45 (energy in SHM, pendulums)','#14.46–14.60 (damped & forced oscillations)']},
+    ],
+    connection:'The ODE you solve in Zill this week — mx″ + bx′ + kx = F₀cos(ωt) — and the driven oscillator in Ch 14 are literally the same equation. Solve it once as a math problem, once as a physics problem, and compare every term.',
+    checkpoint:null
+  },
+  {
+    id:'w8', block:2, badge:'w-green', label:'Week 8',
+    title:'ODE review, fluid mechanics, and block 2 check',
+    math:[
+      {id:'w8m1', text:'Zill Ch 3.8: systems of ODEs (intro)', subs:['Zill 3.8: #1–10 (coupled systems)']},
+      {id:'w8m2', text:'Review: all ODE types from weeks 6–7 (mixed problem set)', subs:[]},
+      {id:'w8m3', text:'Paul\'s Online Notes: ODE mixed practice', subs:[]},
+    ],
+    physics:[
+      {id:'w8p1', text:'Ch 12: Fluid Mechanics', subs:['#12.1–12.20 (pressure, buoyancy, Archimedes)','#12.21–12.40 (fluid flow, Bernoulli\'s equation)']},
+      {id:'w8p2', text:'Review Chs 9–14: solve 3–5 multi-concept problems', subs:[]},
+    ],
+    connection:'Fluid flow (continuity equation + Bernoulli) uses conservation laws you proved with integrals in Chs 6–7. Bernoulli\'s equation is essentially the work-energy theorem applied to fluids.',
+    checkpoint:'End-of-block 2 check — before moving to Week 9: Can you: (1) solve a first-order separable ODE and apply an initial condition? (2) Write and solve the 2nd order ODE for a damped oscillator? (3) Distinguish underdamped, overdamped, and critically damped solutions? (4) Compute torque and angular momentum for a rigid body rotating about a fixed axis? If shaky on ODEs, spend extra time here — they are needed every week from Phase 1 onward.'
+  },
+  {
+    id:'w9', block:3, badge:'w-purple', label:'Week 9',
+    title:'Partial derivatives, gradients, and Coulomb\'s law',
+    math:[
+      {id:'w9m1', text:'Ghrist: multivariable calculus intro', subs:[]},
+      {id:'w9m2', text:'Thomas Ch 14.1–14.3: functions of several variables, partial derivatives', subs:['Thomas 14.1: #1–20 (partial derivatives)']},
+      {id:'w9m3', text:'Thomas Ch 14.4–14.6: chain rule, directional derivatives, gradient', subs:['Thomas 14.5: #1–25 (gradient problems)','Thomas 14.6: #1–20 (directional derivatives)']},
+    ],
+    physics:[
+      {id:'w9p1', text:'Ch 21: Electric Charge and Electric Field', subs:['#21.1–21.25 (Coulomb\'s law, superposition)','#21.26–21.45 (electric field of charge distributions)']},
+      {id:'w9p2', text:'Ch 22: Gauss\'s Law', subs:['#22.1–22.20 (electric flux, Gauss\'s law applications)','#22.21–22.35 (conductors, charge distributions)']},
+    ],
+    connection:'The electric field is E = −∇V — the negative gradient of the potential. This week\'s gradient work in Thomas maps exactly onto electrostatics: steeper potential gradient = stronger field. Gauss\'s law ∮E·dA = Q/ε₀ is a surface integral — you\'re building the tools for it right now.',
+    checkpoint:null
+  },
+  {
+    id:'w10', block:3, badge:'w-purple', label:'Week 10',
+    title:'Multiple integrals and electric potential',
+    math:[
+      {id:'w10m1', text:'Thomas Ch 15.1–15.3: double integrals, iterated integrals', subs:['Thomas 15.1: #1–20 (double integrals)']},
+      {id:'w10m2', text:'Thomas Ch 15.4–15.7: polar, cylindrical, spherical coordinates', subs:['Thomas 15.4: #1–20 (polar integrals)','Thomas 15.7: #1–15 (spherical coordinate integrals)']},
+      {id:'w10m3', text:'Thomas Ch 15.8: change of variables, Jacobian', subs:[]},
+    ],
+    physics:[
+      {id:'w10p1', text:'Ch 23: Electric Potential', subs:['#23.1–23.25 (potential from point charges & distributions)','#23.26–23.40 (equipotential surfaces, E from V)']},
+      {id:'w10p2', text:'Ch 24: Capacitance and Dielectrics', subs:['#24.1–24.20 (capacitance, parallel plate)','#24.21–24.35 (energy stored, dielectrics)']},
+    ],
+    connection:'Finding V from a continuous charge distribution requires integrating 1/r over a volume — exactly the triple integral practice from Thomas Ch 15. Spherical coordinates make these integrals tractable; that\'s why you\'re learning them now.',
+    checkpoint:null
+  },
+  {
+    id:'w11', block:3, badge:'w-purple', label:'Week 11',
+    title:'Div, curl, line integrals, and circuits',
+    math:[
+      {id:'w11m1', text:'Thomas Ch 16.1–16.2: line integrals (scalar & vector fields)', subs:['Thomas 16.1: #1–20 (scalar line integrals)','Thomas 16.2: #1–20 (work as a line integral)']},
+      {id:'w11m2', text:'Thomas Ch 16.3–16.4: Green\'s theorem, conservative fields', subs:['Thomas 16.3: #1–15 (Green\'s theorem)']},
+      {id:'w11m3', text:'Thomas Ch 16.7–16.8: Stokes\' and divergence theorems', subs:['Thomas 16.8: #1–15 (divergence theorem)']},
+    ],
+    physics:[
+      {id:'w11p1', text:'Ch 25: Current, Resistance, and Electromotive Force', subs:['#25.1–25.20 (current density, resistivity, Ohm\'s law)']},
+      {id:'w11p2', text:'Ch 26: Direct-Current Circuits', subs:['#26.1–26.20 (Kirchhoff\'s laws, series/parallel)','#26.21–26.35 (RC circuits — first-order ODE from week 6!)']},
+    ],
+    connection:'Faraday\'s and Ampere\'s laws (coming in Phase 1) are line integrals around closed loops. Gauss\'s law in differential form uses divergence. The four Maxwell equations ARE the theorems you\'re learning this week, dressed in physics clothes. Also: the RC circuit in Ch 26 is a first-order ODE — your week 6 work pays off immediately.',
+    checkpoint:null
+  },
+  {
+    id:'w12', block:3, badge:'w-purple', label:'Week 12',
+    title:'Linear algebra essentials and phase 0 review',
+    math:[
+      {id:'w12m1', text:'3Blue1Brown: Essence of Linear Algebra (watch full series first)', subs:[]},
+      {id:'w12m2', text:'Zill Ch 7–8: matrices, determinants, linear systems', subs:['Zill 7: #1–20 (matrix operations, inverses)']},
+      {id:'w12m3', text:'Zill: eigenvalues & eigenvectors', subs:['Eigenvalue problems: #1–15']},
+      {id:'w12m4', text:'MIT OCW 18.06 (Strang): Lectures 1–6 as supplement', subs:[]},
+    ],
+    physics:[
+      {id:'w12p1', text:'Ch 27: Magnetic Field and Magnetic Forces', subs:['#27.1–27.25 (magnetic force on charges & wires)','#27.26–27.40 (Hall effect, charged particle motion)']},
+      {id:'w12p2', text:'Phase 0 comprehensive review: pick 5 problems from each block', subs:[]},
+    ],
+    connection:'Eigenvectors will feel abstract now — that\'s normal. Their physical meaning snaps into focus in QM: observable quantities are eigenvalues of operators, and quantum states are eigenvectors. Plant the seed here.',
+    checkpoint:'End-of-phase 0 check — before starting Phase 1: Can you: (1) compute div and curl of a 3D vector field? (2) Evaluate a triple integral in spherical coordinates? (3) Solve a 2nd order ODE with initial conditions? (4) Find eigenvalues of a 2×2 matrix? (5) Apply Gauss\'s law (Ch 22) to find E for a spherical charge distribution? If you can do all five, you\'re ready for Phase 1.'
+  }
+];
+
+const STORAGE_KEY = 'phase0-tracker-v1';
+let state = {};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) state = JSON.parse(saved);
+  } catch(e) { state = {}; }
+  document.getElementById('progress-status').textContent = 'Progress loaded';
+  render();
+  updateMetrics();
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  document.getElementById('progress-status').textContent = 'Progress saved \u2713';
+  setTimeout(() => {
+    const el = document.getElementById('progress-status');
+    if (el) el.textContent = 'Progress saves automatically';
+  }, 2000);
+}
+
+function allTaskIds() {
+  let ids = [];
+  WEEKS.forEach(w => {
+    w.math.forEach(t => ids.push(t.id));
+    w.physics.forEach(t => ids.push(t.id));
+  });
+  return ids;
+}
+
+function countDone() { return allTaskIds().filter(id => state[id + '_done']).length; }
+
+function weekPct(w) {
+  const ids = [...w.math.map(t => t.id), ...w.physics.map(t => t.id)];
+  if (!ids.length) return 0;
+  return Math.round(ids.filter(id => state[id + '_done']).length / ids.length * 100);
+}
+
+function updateMetrics() {
+  const total = allTaskIds().length;
+  const done = countDone();
+  const pct = Math.round(done / total * 100);
+  document.getElementById('overall-pct').textContent = pct + '%';
+  document.getElementById('overall-bar').style.width = pct + '%';
+  document.getElementById('m-tasks').textContent = done;
+  document.getElementById('m-total').textContent = total;
+  const weeksComplete = WEEKS.filter(w => weekPct(w) === 100).length;
+  document.getElementById('m-weeks').textContent = weeksComplete + '/12';
+  const cur = WEEKS.find(w => weekPct(w) < 100) || WEEKS[WEEKS.length - 1];
+  document.getElementById('m-block').textContent = 'Block ' + cur.block + ', wk ' + (WEEKS.indexOf(cur) + 1);
+  WEEKS.forEach(w => {
+    const p = weekPct(w);
+    const pEl = document.getElementById('pct-' + w.id);
+    const bEl = document.getElementById('bar-' + w.id);
+    if (pEl) pEl.textContent = p + '%';
+    if (bEl) { bEl.style.width = p + '%'; bEl.style.background = p === 100 ? '#639922' : '#378ADD'; }
+  });
+}
+
+function toggleWeek(wid) {
+  const body = document.getElementById('body-' + wid);
+  const chev = document.getElementById('chev-' + wid);
+  const open = body.classList.toggle('open');
+  chev.textContent = open ? '▼' : '▶';
+}
+
+function checkTask(id, el) {
+  state[id + '_done'] = el.checked;
+  const lbl = document.getElementById('label-' + id);
+  if (lbl) lbl.classList.toggle('done', el.checked);
+  saveState(); updateMetrics();
+}
+
+function saveNote(wid, val) { state['note-' + wid] = val; saveState(); }
+
+function resetAll() {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  state = {}; saveState(); render(); updateMetrics();
+}
+
+function render() {
+  const container = document.getElementById('weeks-container');
+  let html = '';
+  let curBlock = 0;
+  const bNames = {1:'Calc 1 & intro kinematics', 2:'Calc 2, ODEs & Newtonian mechanics', 3:'Calc 3, vector calc & electrostatics'};
+  const bWks = {1:'1–4', 2:'5–8', 3:'9–12'};
+  const bTag = {1:'b1-tag', 2:'b2-tag', 3:'b3-tag'};
+
+  WEEKS.forEach(w => {
+    if (w.block !== curBlock) {
+      curBlock = w.block;
+      html += `<div class="block-header"><span class="block-label">Block ${curBlock} — weeks ${bWks[curBlock]}</span><span class="badge block-tag ${bTag[curBlock]}">${bNames[curBlock]}</span></div>`;
+    }
+    const pct = weekPct(w);
+    const noteVal = (state['note-' + w.id] || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+    let mathHtml = '';
+    w.math.forEach(t => {
+      const chk = state[t.id + '_done'] ? 'checked' : '';
+      const dc = state[t.id + '_done'] ? 'done' : '';
+      mathHtml += `<div class="task-row"><input type="checkbox" id="cb-${t.id}" ${chk} onchange="checkTask('${t.id}',this)"><label id="label-${t.id}" class="task-text ${dc}" for="cb-${t.id}">${t.text}</label></div>`;
+      t.subs.forEach(s => { mathHtml += `<div class="sub-item">→ ${s}</div>`; });
+    });
+
+    let physHtml = '';
+    w.physics.forEach(t => {
+      const chk = state[t.id + '_done'] ? 'checked' : '';
+      const dc = state[t.id + '_done'] ? 'done' : '';
+      physHtml += `<div class="task-row"><input type="checkbox" id="cb-${t.id}" ${chk} onchange="checkTask('${t.id}',this)"><label id="label-${t.id}" class="task-text ${dc}" for="cb-${t.id}">${t.text}</label></div>`;
+      t.subs.forEach(s => { physHtml += `<div class="sub-item">→ ${s}</div>`; });
+    });
+
+    const cpHtml = w.checkpoint ? `<div class="checkpoint-box"><div class="checkpoint-label">${w.id === 'w12' ? 'End-of-phase 0 check' : 'Block checkpoint'}</div><div class="checkpoint-text">${w.checkpoint}</div></div>` : '';
+
+    html += `<div class="week-card">
+      <div class="week-row" onclick="toggleWeek('${w.id}')">
+        <span class="week-badge ${w.badge}">${w.label}</span>
+        <span class="week-title">${w.title}</span>
+        <span class="week-pct" id="pct-${w.id}">${pct}%</span>
+        <div class="week-bar-wrap"><div class="week-bar-track"><div class="week-bar-fill" id="bar-${w.id}" style="width:${pct}%;background:${pct===100?'#639922':'#378ADD'}"></div></div></div>
+        <span class="chevron" id="chev-${w.id}">▶</span>
+      </div>
+      <div class="week-body" id="body-${w.id}">
+        <div class="two-col">
+          <div class="inner-box"><div class="inner-label">Math — 5 hrs</div>${mathHtml}</div>
+          <div class="inner-box"><div class="inner-label">Physics — 6 hrs</div>${physHtml}</div>
+        </div>
+        <div class="conn-box"><div class="conn-label">Connection to make this week</div><div class="conn-text">${w.connection}</div></div>
+        ${cpHtml}
+        <div class="notes-label">Notes</div>
+        <textarea placeholder="Add notes, things to revisit, questions..." oninput="saveNote('${w.id}',this.value)">${noteVal}</textarea>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+loadState();
+</script>
+</body>
+</html>
